@@ -1,6 +1,7 @@
 import Promise from "bluebird";
 import express from "express";
 import Primus from "primus";
+import path from "path";
 
 import logger from "./logger";
 import packageJson from "../../package.json";
@@ -16,17 +17,13 @@ class Server {
     //   extended: true,
     // }));
 
-    this.app.get("/", (req, res) => {
-      logger.info("/");
-      const message = "Hello World!";
-      return res.send({ message });
-    });
-
     this.app.get("/version", (req, res) => {
       logger.info("/version");
       const version = packageJson.version;
       return res.send({ version });
     });
+
+    this.app.use(express.static(path.join(__dirname, "..", "client")));
   }
 
   listen(config) {

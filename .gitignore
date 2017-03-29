@@ -1,5 +1,6 @@
 /node_modules
 /build
 /coverage
+/src/client/js/bundle.js
 npm-debug.log
 db.sqlite

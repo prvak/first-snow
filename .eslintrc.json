@@ -2,7 +2,8 @@
   "extends": "airbnb",
   "rules": {
     "quotes": [2, "double", "avoid-escape"],
-    "arrow-body-style": ["error", "always"]
+    "arrow-body-style": ["error", "always"],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
   },
   "env": {
     "mocha": true
