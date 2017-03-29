@@ -1,0 +1,10 @@
+{
+  "server": {
+    "url": "localhost",
+    "port": "3000"
+  },
+  "db": {
+    "path": "./db.sqlite",
+    "version": "last"
+  }
+}
