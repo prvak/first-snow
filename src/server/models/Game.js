@@ -2,10 +2,8 @@ import Promise from "bluebird";
 
 class Game {
   constructor() {
-    this.players = {};
-    this.state = {
-      players: [{ score: 0 }, { score: 0 }],
-    };
+    this.users = {};
+    this.players = [{ score: 0 }, { score: 0 }];
   }
 
   clone() {
@@ -44,12 +42,12 @@ Game.MAX_PLAYERS = 2;
 
 // This is instead of a database.
 const ACTIVE_GAMES = {};
+let lastId = 0;
 
 Game.Query = {
   save: (game) => {
     const clone = game.clone();
     if (!clone.id) {
-      let lastId = 0;
       lastId += 1;
       clone.id = lastId;
     }

@@ -21,14 +21,6 @@ class Server {
       socket.on("disconnect", () => {
         logger.info("client disconnected");
       });
-      // Create new game and a namespace for it. Return the id of the game.
-      socket.on("game:create", () => {
-        logger.info("Creating game");
-        Game.Query.save(new Game())
-          .then((game) => {
-            socket.emit("game:created", { gameId: game.id });
-          });
-      });
       // Join existing game with given id.
       socket.on("game:join", (data) => {
         const gameId = data.gameId;

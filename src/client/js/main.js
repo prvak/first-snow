@@ -1,46 +1,29 @@
 import React from "react";
 import { render } from "react-dom";
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
-import axios from "axios";
+import thunkMiddleware from "redux-thunk";
+import { createLogger } from "redux-logger";
 
 import App from "./containers/App.react";
 import reducers from "./reducers";
+import Actions from "./actions";
 
 // Grab the state from a global injected into server-generated HTML.
 const initialState = window.__INITIAL_STATE__;
 
 // Create Redux store with initial state.
-const store = createStore(reducers, initialState);
+const loggerMiddleware = createLogger();
+const store = createStore(
+  reducers,
+  applyMiddleware(
+    thunkMiddleware,
+    loggerMiddleware),
+  initialState);
+store.dispatch(Actions.connect());
+store.dispatch(Actions.joinGame(1));
 
 // Create websocket connection.
-const socket = io();
-
-// Initiate new game.
-socket.emit("game:create");
-socket.on("game:created", (data) => {
-  console.log("Game created:", data);
-  socket.off("game:created");
-  socket.emit("game:join", { userId: "Player 1", gameId: data.gameId });
-});
-socket.on("game:joined", (data) => {
-  console.log("Game joined:", data);
-  axios.get("/api/game/1?pretty")
-    .then((res) => {
-      console.log(res)
-    })
-    .catch((error) => {
-      console.log(error)
-    });
-});
-
-socket.on("close", () => {
-  console.log("disconnected from server");
-});
-socket.on("error", (error) => {
-  console.log("ws error", error);
-});
-
 render(
   <Provider store={store}>
     <App />
