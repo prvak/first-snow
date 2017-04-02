@@ -2,6 +2,7 @@ import React from "react";
 import { render } from "react-dom";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
+import axios from "axios";
 
 import App from "./containers/App.react";
 import reducers from "./reducers";
@@ -13,23 +14,32 @@ const initialState = window.__INITIAL_STATE__;
 const store = createStore(reducers, initialState);
 
 // Create websocket connection.
-const ws = new WebSocket("ws://localhost:3000");
-ws.onopen = (event) => {
-  console.log("ws connected to server", event);
-  ws.send(Date.now());
-};
-ws.onmessage = (event) => {
-  console.log("ws message received", event.data);
-  setTimeout(() => {
-    ws.send(Date.now());
-  }, 1000);
-};
-ws.onclose = (event) => {
-  console.log("ws disconnected", event);
-}
-ws.onerror = (event) => {
-  console.log("ws error", event);
-};
+const socket = io();
+
+// Initiate new game.
+socket.emit("game:create");
+socket.on("game:created", (data) => {
+  console.log("Game created:", data);
+  socket.off("game:created");
+  socket.emit("game:join", { userId: "Player 1", gameId: data.gameId });
+});
+socket.on("game:joined", (data) => {
+  console.log("Game joined:", data);
+  axios.get("/api/game/1?pretty")
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((error) => {
+      console.log(error)
+    });
+});
+
+socket.on("close", () => {
+  console.log("disconnected from server");
+});
+socket.on("error", (error) => {
+  console.log("ws error", error);
+});
 
 render(
   <Provider store={store}>

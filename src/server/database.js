@@ -3,8 +3,7 @@ import database from "sqlite/legacy";
 
 import logger from "./logger";
 
-// Main game server.
-class Server {
+class Database {
   connect(config) {
     this.config = config;
     const openDatabase = () => {
@@ -26,6 +25,4 @@ class Server {
   }
 }
 
-const server = new Server();
-
-export default server;
+export default new Database();

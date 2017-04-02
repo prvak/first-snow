@@ -1,10 +1,12 @@
 import Promise from "bluebird";
 import express from "express";
-import path from "path";
-import WebSocket from "ws";
 import http from "http";
+import path from "path";
+import io from "socket.io";
 
 import logger from "./logger";
+import Game from "./models/Game";
+import apiRouter from "./routers/api.router";
 import packageJson from "../../package.json";
 
 // Main game server.
@@ -12,38 +14,53 @@ class Server {
   constructor() {
     this.app = express();
     this.server = http.createServer(this.app);
-    this.wss = new WebSocket.Server({ server: this.server });
+    this.io = io(this.server);
 
-    this.wss.on("connection", (ws) => {
-      logger.info(`ws client connected: ${ws}`);
-
-      ws.on("message", (message) => {
-        logger.info(`ws message received: ${message}`);
-        ws.send(Date.now());
+    this.io.on("connection", (socket) => {
+      logger.info("client connected");
+      socket.on("disconnect", () => {
+        logger.info("client disconnected");
       });
-      ws.on("close", (code) => {
-        logger.info(`ws client disconnected: ${code}`);
+      // Create new game and a namespace for it. Return the id of the game.
+      socket.on("game:create", () => {
+        logger.info("Creating game");
+        Game.Query.save(new Game())
+          .then((game) => {
+            socket.emit("game:created", { gameId: game.id });
+          });
       });
-    });
-    // expressWs(this.app);
-
-    // this.app.ws("/ws", (ws, req) => {
-    //   logger.info("connected to client");
-    // });
-
-    // this.app.get("/ws", (req, res) => {
-    //   logger.info("/ws");
-    //   const message = "Not what you wanted.";
-    //   return res.send({ message });
-    // });
-
-    this.app.get("/version", (req, res) => {
-      logger.info("/version");
-      const version = packageJson.version;
-      return res.send({ version });
+      // Join existing game with given id.
+      socket.on("game:join", (data) => {
+        const gameId = data.gameId;
+        const userId = data.userId;
+        let playerId;
+        logger.info(`Player '${userId}' wants to join game '${gameId}'`);
+        Game.Query.get(gameId)
+          .then((game) => {
+            playerId = game.join(userId);
+            return Game.Query.save(game);
+          })
+          .then((game) => {
+            const gameRoom = gameId;
+            const playerRoom = playerId;
+            socket.join(gameRoom);
+            socket.join(playerRoom);
+            logger.info(`Player '${userId}' joined game '${gameId}' as player '${playerId}'`);
+            this.io.to(game.id).emit("game:joined", { playerId, userId });
+          })
+          .catch((error) => {
+            logger.info(`Player '${userId}' cannot join game '${gameId}': ${error}`);
+            socket.to(socket.id).emit("game:joined", { error });
+          });
+      });
     });
 
     this.app.use(express.static(path.join(__dirname, "..", "client")));
+    this.app.use("/api", apiRouter);
+    this.app.get("/version", (req, res) => {
+      const version = packageJson.version;
+      return res.send({ version });
+    });
   }
 
   listen(config) {
