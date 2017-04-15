@@ -10,8 +10,8 @@ const Player = ({ player }) => {
 
 Player.propTypes = {
   player: PropTypes.shape({
-    userId: PropTypes.string.isRequired,
     score: PropTypes.number.isRequired,
+    userId: PropTypes.string,
   }).isRequired,
 };
 

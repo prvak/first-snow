@@ -7,7 +7,7 @@ class Game {
   }
 
   clone() {
-    return Object.assign(new Game(), this);
+    return Object.assign(new Game(), JSON.parse(JSON.stringify(this)));
   }
 
   join(userId) {
@@ -19,7 +19,7 @@ class Game {
       return this.users[userId].playerId;
     }
     const numPlayers = Object.keys(this.users).length;
-    if (numPlayers > Game.MAX_PLAYERS) {
+    if (numPlayers >= Game.MAX_PLAYERS) {
       throw new Error("Game is full.");
     }
     const playerId = numPlayers;
@@ -53,7 +53,7 @@ Game.Query = {
     if (!game) {
       throw new Error("Not found.");
     }
-    return Promise.resolve(game);
+    return Promise.resolve(game.clone());
   },
 
   /** Get all games*/
