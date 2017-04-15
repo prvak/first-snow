@@ -6,6 +6,7 @@ import io from "socket.io";
 
 import logger from "./logger";
 import Game from "./models/Game";
+import GameEvents from "../common/GameEvents";
 import apiRouter from "./routers/api.router";
 import packageJson from "../../package.json";
 
@@ -26,23 +27,23 @@ class Server {
         const gameId = data.gameId;
         const userId = data.userId;
         let playerId;
-        logger.info(`Player '${userId}' wants to join game '${gameId}'`);
+        logger.info(`User '${userId}' wants to join game '${gameId}'`);
         Game.Query.get(gameId)
           .then((game) => {
             playerId = game.join(userId);
             return Game.Query.save(game);
           })
-          .then((game) => {
+          .then(() => {
             const gameRoom = gameId;
             const playerRoom = playerId;
             socket.join(gameRoom);
             socket.join(playerRoom);
-            logger.info(`Player '${userId}' joined game '${gameId}' as player '${playerId}'`);
-            this.io.to(game.id).emit("game:joined", { playerId, userId });
+            logger.info(`User '${userId}' joined game '${gameId}' as player '${playerId}'`);
+            this.io.to(gameRoom).emit("game:event", { type: GameEvents.USER_JOINED, userId, playerId });
           })
           .catch((error) => {
-            logger.info(`Player '${userId}' cannot join game '${gameId}': ${error}`);
-            socket.to(socket.id).emit("game:joined", { error });
+            logger.info(`User '${userId}' cannot join game '${gameId}': ${error}`);
+            socket.to(socket.id).emit("game:joinError", { userId, gameId, error });
           });
       });
     });

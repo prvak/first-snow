@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import GameEvents from "../../common/GameEvents";
+
 const socket = io();
 
 const Actions = {
@@ -16,9 +18,12 @@ const Actions = {
   },
 
   connect: () => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
       socket.on("connect", () => {
-        dispatch(Actions.setConnectionStatus("connected"));
+        if (getState().connectionStatus !== "connected") {
+          dispatch(Actions.setConnectionStatus("connected"));
+          dispatch(Actions.joinGame(1, "Me"));
+        }
       });
       socket.on("close", () => {
         dispatch(Actions.setConnectionStatus("disconnected"));
@@ -38,32 +43,34 @@ const Actions = {
     return { type: "FETCH_GAME_SUCCESS", game };
   },
 
-  fetchGameError: (game) => {
-    return { type: "FETCH_GAME_ERROR", game };
+  fetchGameError: (error) => {
+    return { type: "FETCH_GAME_ERROR", error };
   },
 
-  joinGame: (gameId) => {
+  joinGame: (gameId, userId) => {
     return (dispatch) => {
-      console.log("getting game");
+      console.log("Joining game");
       dispatch(Actions.fetchGameRequest(gameId));
       return axios.get(`/api/game/${gameId}`)
-        .then((res) => { dispatch(Actions.fetchGameSuccess(res.data)); })
-        .catch((error) => { dispatch(Actions.fetchGameError(error)); });
+        .catch((error) => { dispatch(Actions.fetchGameError(error)); })
+        .then((response) => {
+          dispatch(Actions.fetchGameSuccess(response.data));
+          socket.emit("game:join", { gameId, userId });
+          socket.on("game:joinError", (data) => {
+            console.log("Failed to join game:", data);
+          });
+          socket.on("game:event", (data) => {
+            console.log("Game event:", data);
+            switch (data.type) {
+              case GameEvents.USER_JOINED:
+                dispatch(Actions.setGameUser(data.userId, data.playerId));
+                break;
+              default:
+                break;
+            }
+          });
+        });
     };
-  },
-
-  ajoinGame: (gameId) => {
-    this.socket.emit("game:join", { userId: "Player 1", gameId });
-    this.socket.on("game:joined", (data) => {
-      console.log("Game joined:", data);
-    });
-  },
-
-  aleaveGame: (gameId) => {
-    this.socket.emit("game:leave", { userId: "Player 1", gameId });
-    this.socket.on("game:left", (data) => {
-      console.log("Game left:", data);
-    });
   },
 };
 

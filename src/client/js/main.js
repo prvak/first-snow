@@ -21,7 +21,6 @@ const store = createStore(
     loggerMiddleware),
   initialState);
 store.dispatch(Actions.connect());
-store.dispatch(Actions.joinGame(1));
 
 // Create websocket connection.
 render(

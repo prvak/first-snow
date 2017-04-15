@@ -10,30 +10,20 @@ class Game {
     return Object.assign(new Game(), this);
   }
 
-  getState() {
-    return {
-      players: this.players,
-    };
-  }
-
-  isFull() {
-    return Object.keys(this.players).length >= 2;
-  }
-
   join(userId) {
     if (!userId) {
       throw new Error("Invalid user ID.");
     }
-    if (this.players[userId]) {
-      // Player is already in the game.
-      return this.players[userId].playerId;
+    if (this.users[userId]) {
+      // User is already in the game.
+      return this.users[userId].playerId;
     }
-    const numPlayers = Object.keys(this.players).length;
+    const numPlayers = Object.keys(this.users).length;
     if (numPlayers > Game.MAX_PLAYERS) {
       throw new Error("Game is full.");
     }
     const playerId = numPlayers;
-    this.players[userId] = playerId;
+    this.users[userId] = { playerId };
     return playerId;
   }
 }

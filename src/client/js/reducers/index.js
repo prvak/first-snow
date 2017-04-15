@@ -1,5 +1,3 @@
-import Actions from "../actions";
-
 const initialState = {
   connectionStatus: "disconnected",
   game: {
@@ -46,7 +44,7 @@ const game = (state = {}, action) => {
         users: gameUsers(action.game.users, action),
         players: gamePlayers(action.game.players, action),
       });
-    case "FETCH_GAME_FAILURE":
+    case "FETCH_GAME_ERROR":
       return Object.assign({}, state, {
         isFetching: false,
         fetchingError: action.error,
@@ -61,8 +59,9 @@ export default (state = initialState, action) => {
       return Object.assign({}, state, {
         connectionStatus: action.connectionStatus,
       });
-    case "REQUEST_GAME":
-    case "RECEIVE_GAME":
+    case "FETCH_GAME_REQUEST":
+    case "FETCH_GAME_SUCCESS":
+    case "FETCH_GAME_ERROR":
       return Object.assign({}, state, {
         game: game(state.game, action),
       });
