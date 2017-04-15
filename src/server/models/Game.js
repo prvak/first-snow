@@ -3,7 +3,31 @@ import Promise from "bluebird";
 class Game {
   constructor() {
     this.users = {};
-    this.players = [{ score: 0 }, { score: 0 }];
+    // Public player information.
+    this.players = [
+      {
+        score: 0,
+        inventory: [],
+        bear: -1,
+        dayCamp: -1,
+        nightCamp: -1,
+      },
+      {
+        score: 0,
+        inventory: [],
+        bear: -1,
+        dayCamp: -1,
+        nightCamp: -1,
+      },
+    ];
+    // Information available only to the respective player.
+    this.secrets = [{}, {}];
+    // Unused land cards.
+    this.landCards = [];
+    // Placed land cards.
+    this.landscape = [];
+    // Order in which will players play.
+    this.playersOrder = [0, 1, 1, 0];
   }
 
   clone() {
