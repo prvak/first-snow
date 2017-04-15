@@ -7,8 +7,8 @@ const Game = ({ players }) => {
   }
   return (
     <div>
-      <Player score={players[0].score} />
-      <Player score={players[1].score} />
+      <Player player={players[0]} />
+      <Player player={players[1]} />
     </div>
   );
 };

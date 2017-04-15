@@ -24,6 +24,7 @@ class Game {
     }
     const playerId = numPlayers;
     this.users[userId] = { playerId };
+    this.players[playerId].userId = userId;
     return playerId;
   }
 }

@@ -1,15 +1,18 @@
 import React, { PropTypes } from "react";
 
-const Player = ({ score }) => {
+const Player = ({ player }) => {
   return (
     <div>
-      { score }
+      {player.userId} {player.score}
     </div>
   );
 };
 
 Player.propTypes = {
-  score: PropTypes.number.isRequired,
+  player: PropTypes.shape({
+    userId: PropTypes.string.isRequired,
+    score: PropTypes.number.isRequired,
+  }).isRequired,
 };
 
 export default Player;

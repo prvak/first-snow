@@ -3,6 +3,7 @@ import express from "express";
 import http from "http";
 import path from "path";
 import io from "socket.io";
+import ioClient from "socket.io-client";
 
 import logger from "./logger";
 import Game from "./models/Game";
@@ -15,9 +16,9 @@ class Server {
   constructor() {
     this.app = express();
     this.server = http.createServer(this.app);
-    this.io = io(this.server);
+    this.ioServer = io(this.server);
 
-    this.io.on("connection", (socket) => {
+    this.ioServer.on("connection", (socket) => {
       logger.info("client connected");
       socket.on("disconnect", () => {
         logger.info("client disconnected");
@@ -39,7 +40,11 @@ class Server {
             socket.join(gameRoom);
             socket.join(playerRoom);
             logger.info(`User '${userId}' joined game '${gameId}' as player '${playerId}'`);
-            this.io.to(gameRoom).emit("game:event", { type: GameEvents.USER_JOINED, userId, playerId });
+            this.ioServer.to(gameRoom).emit("game:event", {
+              type: GameEvents.USER_JOINED,
+              userId,
+              playerId,
+            });
           })
           .catch((error) => {
             logger.info(`User '${userId}' cannot join game '${gameId}': ${error}`);
@@ -62,42 +67,27 @@ class Server {
       return new Promise((resolve, reject) => {
         this.server.listen(this.config.port, this.config.url, (error) => {
           if (error) reject(error);
-          // this.wsClientTest(config);
           resolve();
         }).on("error", (error) => {
           reject(error);
         });
       });
     };
-
+    const connectClientSocket = () => {
+      return new Promise((resolve, reject) => {
+        this.ioClient = ioClient(`http://${this.config.url}:${this.config.port}`);
+        this.ioClient.on("connect", () => {
+          resolve();
+        });
+        this.ioClient.on("error", (error) => {
+          reject(error);
+        });
+      });
+    };
     return Promise.resolve()
       .then(startServer)
+      .then(connectClientSocket)
       .then(() => { logger.info(`Server listening at 'http://${config.url}:${config.port}'.`); });
-  }
-
-  wsClientTest() {
-    const ws = new WebSocket(`ws://${this.config.url}:${this.config.port}`);
-
-    ws.on("open", () => {
-      logger.info("connected to server");
-      ws.send(Date.now());
-    });
-
-    ws.on("close", () => {
-      logger.info("disconnected");
-    });
-
-    ws.on("message", (data, flags) => {
-      logger.info(`Roundtrip time: ${Date.now() - data} ms`, flags);
-
-      setTimeout(() => {
-        ws.send(Date.now());
-      }, 1000);
-    });
-
-    ws.on("error", (e) => {
-      logger.info("error", e);
-    });
   }
 }
 
