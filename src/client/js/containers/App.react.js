@@ -6,9 +6,9 @@ import Game from "./Game.react";
 
 const App = ({ connectionStatus, game }) => {
   return (
-    <div>
+    <div className="app">
       <ConnectionStatus connectionStatus={connectionStatus} />
-      <Game players={game.players} />
+      <Game players={game.players} landCards={game.landCards} />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { PropTypes } from "react";
 
 const Player = ({ player }) => {
   return (
-    <div className="player">
+    <div>
       {player.userId} {player.score}
     </div>
   );

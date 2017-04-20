@@ -61,11 +61,21 @@ const gamePlayers = (state = [{ score: 1 }, { score: 5 }], action) => {
   }
 };
 
+const gameLandCards = (state = [], action) => {
+  switch (action.type) {
+    case "FETCH_GAME_SUCCESS":
+      return action.game.landCards;
+    default:
+      return state;
+  }
+};
+
 const game = combineReducers({
   id: gameId,
   fetchStatus: gameFetchStatus,
   players: gamePlayers,
   users: gameUsers,
+  landCards: gameLandCards,
 });
 
 const connectionStatus = (state = "disconnected", action) => {

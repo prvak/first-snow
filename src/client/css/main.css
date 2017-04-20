@@ -1,4 +1,4 @@
-#main {
+#root {
   position: absolute;
   background-color: white;
   width: 100%;
@@ -8,7 +8,7 @@
   left: 0px;
 }
 
-#app {
+.app {
   position: absolute;
   background-color: white;
   top: 0px;

@@ -34,17 +34,40 @@ export const Bear = {
   SET: "SET",
 };
 
-export const Cards = [
+export const LandCards = [
   {
+    index: 0,
     summer: {
       left: {
         resources: [
-          { resource: Resources.WOOD, item: Item.AXE },
-        ]
+          { resource: Resources.FISH },
+          { resource: Resources.WOOD },
+          { resource: Resources.WOOD, item: Items.AXE },
+        ],
       },
       right: {
-
+        resources: [
+          { resource: Resources.FISH },
+          { resource: Resources.WOOD },
+          { resource: Resources.WOOD, item: Items.AXE },
+        ],
       },
-    }
-  }
+    },
+    winter: {
+      left: {
+        resources: [
+          { resource: Resources.FISH },
+          { resource: Resources.WOOD },
+          { resource: Resources.WOOD, item: Items.AXE },
+        ],
+      },
+      right: {
+        resources: [
+          { resource: Resources.FISH },
+          { resource: Resources.WOOD },
+          { resource: Resources.WOOD, item: Items.AXE },
+        ],
+      },
+    },
+  },
 ];

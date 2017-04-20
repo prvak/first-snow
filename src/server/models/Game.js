@@ -1,5 +1,7 @@
 import Promise from "bluebird";
 
+import { LandCards } from "../../common/GameConstants";
+
 class Game {
   constructor() {
     this.users = {};
@@ -22,8 +24,8 @@ class Game {
     ];
     // Information available only to the respective player.
     this.secrets = [{}, {}];
-    // Unused land cards.
-    this.landCards = [];
+    // All land cards.
+    this.landCards = LandCards;
     // Placed land cards.
     this.landscape = [];
     // Order in which will players play.
