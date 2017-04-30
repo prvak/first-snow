@@ -6,6 +6,7 @@
   bottom: 0px;
   right: 0px;
   left: 0px;
+  color: black;
 }
 
 .app {
@@ -17,55 +18,24 @@
   margin: auto;
 }
 
-.space {
-  position: absolute;
+.unusedLandCards {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.landCard {
   box-sizing: border-box;
   border: solid black 1px;
-  background-color: white;
-  color: black;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  margin: auto;
-  overflow: hidden;
+  background-color: lightblue;
+  display: flex;
+  flex-direction: row;
+  width: 22rem;
+  justify-content: space-between;
 }
 
-.object {
-  position: absolute;
-  border-radius: 50%;
-}
-
-.hull {
-  position: absolute;
-  text-align: center;
-  vertical-align: middle;
-  border-radius: 50%;
-}
-
-.messageBox {
-  text-align: center;
-  position: absolute;
+.landCard__half {
   box-sizing: border-box;
   border: solid black 1px;
-  background-color: rgba(255, 255, 255, 0.95);
-  margin: auto;
-  width: 30%;
-  top: 30%;
-  left: 0px;
-  right: 0px;
-}
-
-.scoreBox {
-  text-align: center;
-  position: absolute;
-  box-sizing: border-box;
-  color: gray;
-  font-size: 1.5rem;
-  top: 0.5rem;
-  right: 0.5rem;
-}
-
-.score {
-  font-size: 1.5rem;
+  background-color: lightblue;
 }
