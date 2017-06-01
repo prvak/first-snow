@@ -1,6 +1,6 @@
 import Promise from "bluebird";
 
-import { LandCards } from "../../common/GameConstants";
+import { LandCards, Bear, Camp } from "../../common/GameConstants";
 
 class Game {
   constructor() {
@@ -10,16 +10,34 @@ class Game {
       {
         score: 0,
         inventory: [],
-        bear: -1,
-        dayCamp: -1,
-        nightCamp: -1,
+        bear: {
+          status: Bear.UNSET,
+          index: 0,
+        },
+        dayCamp: {
+          status: Camp.UNSET,
+          index: 0,
+        },
+        nightCamp: {
+          status: Camp.UNSET,
+          index: 0,
+        },
       },
       {
         score: 0,
         inventory: [],
-        bear: -1,
-        dayCamp: -1,
-        nightCamp: -1,
+        bear: {
+          status: Bear.UNSET,
+          index: 0,
+        },
+        dayCamp: {
+          status: Camp.UNSET,
+          index: 0,
+        },
+        nightCamp: {
+          status: Camp.UNSET,
+          index: 0,
+        },
       },
     ];
     // Information available only to the respective player.

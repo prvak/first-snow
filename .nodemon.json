@@ -1,4 +1,4 @@
 {
   "verbose": true,
-  "ignore": ["/src/client/"]
+  "ignore": ["/src/client/", "*.log"]
 }

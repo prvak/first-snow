@@ -20,9 +20,10 @@ const Actions = {
   connect: () => {
     return (dispatch, getState) => {
       socket.on("connect", () => {
-        if (getState().connectionStatus !== "connected") {
+        const state = getState();
+        if (state.connectionStatus !== "connected") {
           dispatch(Actions.setConnectionStatus("connected"));
-          dispatch(Actions.joinGame(1, "Me"));
+          dispatch(Actions.joinGame(1, state.userId));
         }
       });
       socket.on("close", () => {
@@ -65,12 +66,30 @@ const Actions = {
               case GameEvents.USER_JOINED:
                 dispatch(Actions.setGameUser(data.userId, data.playerId));
                 break;
+              case GameEvents.BEAR_CHOSEN:
+                dispatch(Actions.setBear(data.userId, data.playerId, data.bear));
+                break;
               default:
                 break;
             }
           });
         });
     };
+  },
+
+  selectBear: (index) => {
+    return (dispatch) => {
+      console.log("Choosing bear", index);
+      dispatch(Actions.sendChooseBear(playerId, index));
+    };
+  },
+
+  sendChooseBear: (index) => {
+
+  },
+
+  setBear: (index) => {
+
   },
 };
 

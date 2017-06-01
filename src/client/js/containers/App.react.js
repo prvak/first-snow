@@ -4,11 +4,11 @@ import { connect } from "react-redux";
 import ConnectionStatus from "./ConnectionStatus.react";
 import Game from "./Game.react";
 
-const App = ({ connectionStatus, game }) => {
+const App = ({ connectionStatus, game, userId }) => {
   return (
     <div className="app">
       <ConnectionStatus connectionStatus={connectionStatus} />
-      <Game players={game.players} landCards={game.landCards} />
+      <Game players={game.players} landCards={game.landCards} localUserId={userId} />
     </div>
   );
 };
@@ -24,6 +24,7 @@ const mapStateToProps = (state) => {
   return {
     connectionStatus: state.connectionStatus,
     game: state.game,
+    userId: state.userId,
   };
 };
 

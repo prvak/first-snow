@@ -2,9 +2,9 @@ import React, { PropTypes } from "react";
 
 const Resource = ({ resource, item }) => {
   if (item === "") {
-    return <div>{resource}</div>;
+    return <div className="resource">{resource}</div>;
   } else {
-    return <div>{resource} ({item})</div>;
+    return <div className="resource">{resource} ({item})</div>;
   }
 };
 

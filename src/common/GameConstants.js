@@ -34,6 +34,11 @@ export const Bear = {
   SET: "SET",
 };
 
+export const Camp = {
+  UNSET: "UNSET",
+  SET: "SET",
+};
+
 export const LandCards = [
   {
     index: 0,

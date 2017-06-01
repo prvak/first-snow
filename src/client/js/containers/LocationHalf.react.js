@@ -6,7 +6,7 @@ const LocationHalf = ({ side, resources }) => {
   const r = resources.map((resource, key) => {
     return <Resource key={key} resource={resource.resource} item={resource.item} />;
   });
-  return <div className="locationHalf">{r}</div>;
+  return <div className="locationCard__half">{r}</div>;
 };
 
 LocationHalf.propTypes = {

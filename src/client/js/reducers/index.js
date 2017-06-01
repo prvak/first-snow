@@ -1,5 +1,7 @@
 import { combineReducers } from "redux";
 
+import { Bear } from "../../../common/GameConstants";
+
 const gameId = (state = 0, action) => {
   switch (action.type) {
     case "FETCH_GAME_SUCCESS":
@@ -7,6 +9,10 @@ const gameId = (state = 0, action) => {
     default:
       return state;
   }
+};
+
+const userId = (state = "Me") => {
+  return state;
 };
 
 const gameFetchStatus = (state = { isFetching: false }, action) => {
@@ -45,7 +51,12 @@ const gameUsers = (state = {}, action) => {
   }
 };
 
-const gamePlayers = (state = [{ score: 1 }, { score: 5 }], action) => {
+const gamePlayers = (
+    state = [
+      { score: 1, bear: { status: Bear.UNSET } },
+      { score: 5, bear: { status: Bear.UNSET } },
+    ],
+    action) => {
   switch (action.type) {
     case "FETCH_GAME_SUCCESS":
       return action.game.players;
@@ -87,4 +98,4 @@ const connectionStatus = (state = "disconnected", action) => {
   }
 };
 
-export default combineReducers({ game, connectionStatus });
+export default combineReducers({ game, connectionStatus, userId });
