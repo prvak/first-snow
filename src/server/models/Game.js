@@ -17,10 +17,12 @@ class Game {
         dayCamp: {
           status: Camp.UNSET,
           index: 0,
+          side: "left",
         },
         nightCamp: {
           status: Camp.UNSET,
           index: 0,
+          side: "right",
         },
       },
       {
