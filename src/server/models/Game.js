@@ -54,6 +54,21 @@ class Game {
     return Object.assign(new Game(), JSON.parse(JSON.stringify(this)));
   }
 
+  filterPrivateFields(userId) {
+    const privateGame = this.clone();
+    privateGame.players = privateGame.players.map((player) => {
+      if (player.userId !== userId && player.bear.status === Bear.HIDDEN) {
+        return Object.assign({}, player, {
+          bear: {
+            status: player.bear.status,
+          },
+        });
+      }
+      return player;
+    });
+    return privateGame;
+  }
+
   join(userId) {
     if (!userId) {
       throw new Error("Invalid user ID.");
@@ -73,14 +88,17 @@ class Game {
   }
 
   setBear(playerId, index) {
-    if (!playerId) {
+    if (!(playerId >= 0 && playerId < 2)) {
       throw new Error("Invalid player ID.");
     }
     if (!(index >= 0 && index < 6)) {
       throw new Error("Invalid bear index.");
     }
     const bear = this.players[playerId].bear;
-    bear.status = Bear.SET;
+    if (bear.status !== Bear.UNSET) {
+      throw new Error("Bear already set.");
+    }
+    bear.status = Bear.HIDDEN;
     bear.index = index;
     return bear;
   }

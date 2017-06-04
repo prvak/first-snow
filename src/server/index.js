@@ -18,8 +18,9 @@ function createTestingData() {
   logger.info("Creating a new Game");
   return Game.Query.save(new Game())
     .then((game) => {
-      const ai = new Ai("AI");
-      ai.joinGame(game, server.ioClient);
+      const userId = "AI";
+      const ai = new Ai(userId);
+      ai.joinGame(game.filterPrivateFields(userId), server.ioClient);
     });
 }
 

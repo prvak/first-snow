@@ -1,6 +1,7 @@
 import express from "express";
 
 import Game from "../models/Game";
+import logger from "../logger";
 
 const router = express.Router();
 
@@ -22,11 +23,15 @@ router.post("/", (req, res) => {
 
 // Get game by id.
 router.get("/:gameId/", (req, res) => {
+  const gameId = req.params.gameId;
+  const userId = req.query.userId;
   Game.Query.get(req.params.gameId)
     .then((game) => {
-      res.send(game);
+      const privateGame = game.filterPrivateFields(userId);
+      res.send(privateGame);
     })
     .catch((error) => {
+      logger.info(`User '${userId}' failed to get game '${gameId}': ${error}`);
       res.status(404).send({ error });
     });
 });

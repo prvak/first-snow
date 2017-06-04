@@ -32,6 +32,7 @@ export const Craft = {
 export const Bear = {
   UNSET: "UNSET",
   SET: "SET",
+  HIDDEN: "HIDDEN",
 };
 
 export const Camp = {

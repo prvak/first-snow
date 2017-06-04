@@ -55,7 +55,7 @@ const Actions = {
     return (dispatch) => {
       console.log("Joining game");
       dispatch(Actions.fetchGameRequest(gameId));
-      return axios.get(`/api/game/${gameId}`)
+      return axios.get(`/api/game/${gameId}?userId=${userId}`)
         .catch((error) => { dispatch(Actions.fetchGameError(error)); })
         .then((response) => {
           dispatch(Actions.fetchGameSuccess(response.data));
