@@ -3,24 +3,30 @@ import React, { PropTypes } from "react";
 import { connect } from "react-redux";
 import Actions from "../actions";
 
-const SelectBear = ({ dispatch }) => {
-  const choose = (index) => {
-    return () => {
-      dispatch(Actions.selectBear(index));
-    };
+const SelectBear = ({ playerId, index, onClick }) => {
+  const choose = () => {
+    onClick(playerId, index);
   };
-  const selectors = [1, 2, 3, 4, 5, 6].map((number) => {
-    return <button key={number} onClick={choose(number - 1)}>{number}</button>;
-  });
-  return (
-    <div className="bearSelector">
-      {selectors}
-    </div>
-  );
+  return <button onClick={choose}>{index + 1}</button>;
 };
 
 SelectBear.propTypes = {
-  dispatch: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
+  playerId: PropTypes.number.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
-export default connect()(SelectBear);
+const mapStateToProps = () => {
+  return {
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onClick: (playerId, index) => {
+      dispatch(Actions.selectBear(playerId, index));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SelectBear);

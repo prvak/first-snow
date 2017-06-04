@@ -26,6 +26,9 @@ const Actions = {
           dispatch(Actions.joinGame(1, state.userId));
         }
       });
+      socket.on("disconnect", () => {
+        dispatch(Actions.setConnectionStatus("disconnect"));
+      });
       socket.on("close", () => {
         dispatch(Actions.setConnectionStatus("disconnected"));
       });
@@ -60,6 +63,7 @@ const Actions = {
           socket.on("game:joinError", (data) => {
             console.log("Failed to join game:", data);
           });
+          console.log("Register for game events");
           socket.on("game:event", (data) => {
             console.log("Game event:", data);
             switch (data.type) {
@@ -67,7 +71,7 @@ const Actions = {
                 dispatch(Actions.setGameUser(data.userId, data.playerId));
                 break;
               case GameEvents.BEAR_CHOSEN:
-                dispatch(Actions.setBear(data.userId, data.playerId, data.bear));
+                dispatch(Actions.setBear(data.playerId, data.bear));
                 break;
               default:
                 break;
@@ -77,19 +81,19 @@ const Actions = {
     };
   },
 
-  selectBear: (index) => {
+  selectBear: (playerId, index) => {
     return (dispatch) => {
-      console.log("Choosing bear", index);
-      dispatch(Actions.sendChooseBear(playerId, index));
+      dispatch(Actions.chooseBearRequest(playerId, index));
+      socket.emit("game:bear:choose", { playerId, index });
     };
   },
 
-  sendChooseBear: (index) => {
-
+  chooseBearRequest: (playerId, index) => {
+    return { type: "CHOOSE_BEAR_REQUEST", playerId, index };
   },
 
-  setBear: (index) => {
-
+  setBear: (playerId, bear) => {
+    return { type: "SET_BEAR", playerId, bear };
   },
 };
 

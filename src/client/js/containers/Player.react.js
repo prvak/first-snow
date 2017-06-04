@@ -2,12 +2,16 @@ import React, { PropTypes } from "react";
 
 import BearDisplay from "./BearDisplay.react";
 
-const Player = ({ player, isLocalPlayer }) => {
+const Player = ({ player, playerId, isLocalPlayer }) => {
   return (
     <div className="player">
-      <div>ID: {player.userId}</div>
+      <div>User: {player.userId}</div>
       <div>Score: {player.score}</div>
-      <BearDisplay bear={player.bear} isLocalPlayer={isLocalPlayer} />
+      <BearDisplay
+        bear={player.bear}
+        playerId={playerId}
+        isLocalPlayer={isLocalPlayer}
+      />
     </div>
   );
 };
@@ -18,6 +22,7 @@ Player.propTypes = {
     userId: PropTypes.string,
     bear: PropTypes.object,
   }).isRequired,
+  playerId: PropTypes.number.isRequired,
   isLocalPlayer: PropTypes.bool.isRequired,
 };
 

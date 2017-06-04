@@ -19,36 +19,61 @@ class Server {
     this.ioServer = io(this.server);
 
     this.ioServer.on("connection", (socket) => {
-      logger.info("client connected");
+      logger.info(`Client connected: ${socket.id}`);
       socket.on("disconnect", () => {
-        logger.info("client disconnected");
+        logger.info(`Client disconnected: ${socket.id}`);
       });
+      const session = {};
       // Join existing game with given id.
       socket.on("game:join", (data) => {
-        const gameId = data.gameId;
-        const userId = data.userId;
-        let playerId;
-        logger.info(`User '${userId}' wants to join game '${gameId}'`);
-        Game.Query.get(gameId)
+        session.gameId = data.gameId;
+        session.userId = data.userId;
+        logger.info(`User '${data.userId}' wants to join game '${data.gameId}'`);
+        Game.Query.get(data.gameId)
           .then((game) => {
-            playerId = game.join(userId);
+            session.playerId = game.join(data.userId);
             return Game.Query.save(game);
           })
           .then(() => {
-            const gameRoom = gameId;
-            const playerRoom = playerId;
-            socket.join(gameRoom);
-            socket.join(playerRoom);
-            logger.info(`User '${userId}' joined game '${gameId}' as player '${playerId}'`);
-            this.ioServer.to(gameRoom).emit("game:event", {
+            session.gameRoom = `/game/${session.gameId}`;
+            session.playerRoom = `/game/${session.gameId}/player/${session.playerId}`;
+            socket.join(session.gameRoom);
+            socket.join(session.playerRoom);
+            logger.info(`User '${session.userId}' joined game '${session.gameId}' as player '${session.playerId}'`);
+            this.ioServer.to(session.gameRoom).emit("game:event", {
               type: GameEvents.USER_JOINED,
-              userId,
-              playerId,
+              userId: session.userId,
+              playerId: session.playerId,
             });
           })
           .catch((error) => {
-            logger.info(`User '${userId}' cannot join game '${gameId}': ${error}`);
-            socket.to(socket.id).emit("game:joinError", { userId, gameId, error });
+            logger.info(`User '${session.userId}' cannot join game '${session.gameId}': ${error}`);
+            socket.to(socket.id).emit("game:error", { userId: session.userId, gameId: session.gameId, error });
+          });
+      });
+      socket.on("game:bear:choose", (data) => {
+        logger.info(`Game ${session.gameId}: Player '${session.playerId}': Chooses bear at '${data.index}'`);
+        let bear;
+        Game.Query.get(session.gameId)
+          .then((game) => {
+            bear = game.setBear(session.playerId, data.index);
+            return Game.Query.save(game);
+          })
+          .then(() => {
+            this.ioServer.to(session.gameRoom).emit("game:event", {
+              type: GameEvents.BEAR_CHOSEN,
+              playerId: session.playerId,
+              bear: { status: bear.status },
+            });
+            this.ioServer.to(session.playerRoom).emit("game:event", {
+              type: GameEvents.BEAR_CHOSEN,
+              playerId: session.playerId,
+              bear: { status: bear.status, index: bear.index },
+            });
+          })
+          .catch((error) => {
+            logger.info(`Game ${session.gameId}: Player '${session.playerId}': Cannot choose bear at '${data.index}': ${error}`);
+            socket.to(socket.id).emit("game:error", { gameId: session.gameId, playerId: session.playerId, error });
           });
       });
     });

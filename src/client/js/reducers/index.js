@@ -51,6 +51,25 @@ const gameUsers = (state = {}, action) => {
   }
 };
 
+const gamePlayerBear = (state = { status: Bear.UNSET }, action) => {
+  switch (action.type) {
+    case "CHOOSE_BEAR_REQUEST":
+      return Object.assign({}, state, {
+        index: action.index,
+        isChoosing: true,
+      });
+    case "SET_BEAR": {
+      return Object.assign({}, state, {
+        status: action.bear.status,
+        index: action.bear.index,
+        isChoosing: false,
+      });
+    }
+    default:
+      return state;
+  }
+};
+
 const gamePlayers = (
     state = [
       { score: 1, bear: { status: Bear.UNSET } },
@@ -64,6 +83,14 @@ const gamePlayers = (
       const newState = [...state];
       newState[action.playerId] = Object.assign({}, newState[action.playerId], {
         userId: action.userId,
+      });
+      return newState;
+    }
+    case "CHOOSE_BEAR_REQUEST":
+    case "SET_BEAR": {
+      const newState = [...state];
+      newState[action.playerId] = Object.assign({}, newState[action.playerId], {
+        bear: gamePlayerBear(state[action.playerId].bear, action),
       });
       return newState;
     }

@@ -71,6 +71,19 @@ class Game {
     this.players[playerId].userId = userId;
     return playerId;
   }
+
+  setBear(playerId, index) {
+    if (!playerId) {
+      throw new Error("Invalid player ID.");
+    }
+    if (!(index >= 0 && index < 6)) {
+      throw new Error("Invalid bear index.");
+    }
+    const bear = this.players[playerId].bear;
+    bear.status = Bear.SET;
+    bear.index = index;
+    return bear;
+  }
 }
 
 Game.MAX_PLAYERS = 2;
@@ -95,7 +108,7 @@ Game.Query = {
   get: (gameId) => {
     const game = ACTIVE_GAMES[gameId];
     if (!game) {
-      throw new Error("Not found.");
+      return Promise.reject(new Error(`Not found: ${gameId}`));
     }
     return Promise.resolve(game.clone());
   },

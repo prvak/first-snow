@@ -12,8 +12,8 @@ const Game = ({ players, landCards, localUserId }) => {
   });
   return (
     <div className="game">
-      <Player player={players[0]} isLocalPlayer={isLocalPlayer[0]} />
-      <Player player={players[1]} isLocalPlayer={isLocalPlayer[1]} />
+      <Player player={players[0]} playerId={0} isLocalPlayer={isLocalPlayer[0]} />
+      <Player player={players[1]} playerId={1} isLocalPlayer={isLocalPlayer[1]} />
       <UnusedLandCards landCards={landCards} />
     </div>
   );
